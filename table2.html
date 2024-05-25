@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salary Comparison</title>
+    <style>
+      .comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  }
+
+.comparison-table th,
+.comparison-table td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+
+.comparison-table th {
+  background-color: #f2f2f2;
+}
+
+.comparison-table td[colspan="2"] {
+  font-weight: bold;
+}
+
+.comparison-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.comparison-table tr:hover {
+  background-color: #e5e5e5;
+}
+</style>
+</head>
+<script>function compare() {
+  clearResults();
+
+  var tpt = 0;
+  var ida = 38.3;
+  var cafetaria = 26;
+  var hra = 18;
+
+  var bp = parseFloat(basic_pay_entry.value);
+  var level = parseInt(pay_level_var.value);
+  var da = parseFloat(da_percentage_entry.value);
+  var cea = parseInt(num_children_entry.value);
+
+  // Calculation logic...
+
+  var nbp = Math.round(bp * ((1 + (da / 100)) / (1 + (ida / 100))), 10);
+
+  if (nbp < 20000 && level === 1) {
+    nbp = 20000;
+  }
+
+  if (nbp < 21000 && level === 2) {
+    nbp = 21000;
+  }
+
+  if (nbp < 23000 && level === 3) {
+    nbp = 23000;
+  }
+
+  var daval = Math.round(bp * (da / 100));
+  var idaval = Math.round(nbp * (ida / 100));
+
+  var hraval = Math.round(bp * (hra / 100));
+  var ihraval = Math.round(nbp * (hra / 100));
+
+  var ceaval = cea * 2250;
+
+  var newsval = level >= 7 ? 500 : 0;
+  var televal = level >= 13 ? 2000 : 0;
+
+  if (level >= 1 && level <= 2) {
+    tpt = bp >= 24200 ? Math.round(1800 * (1 + da / 100)) : Math.round(900 * (1 + da / 100));
+  } else if (level >= 3 && level <= 8) {
+    tpt = Math.round(1800 * (1 + da / 100));
+  } else if (level >= 9) {
+    tpt = Math.round(3600 * (1 + da / 100));
+  }
+
+  var cafetariaval = Math.round(nbp * (cafetaria / 100));
+
+  var allow = tpt + ceaval + newsval + televal;
+
+  var sca = allow > cafetariaval ? allow - cafetariaval : 0;
+
+  // Create HTML table for results
+  var table = document.createElement("table");
+  table.classList.add("comparison-table");
+
+  var headerRow = document.createElement("tr");
+  var existingPayHeader = document.createElement("th");
+  existingPayHeader.setAttribute("colspan", "2");
+  existingPayHeader.textContent = "Existing Pay";
+  var afterAbsorptionHeader = document.createElement("th");
+  afterAbsorptionHeader.setAttribute("colspan", "2");
+  afterAbsorptionHeader.textContent = "After Absorption";
+
+  headerRow.appendChild(existingPayHeader);
+  headerRow.appendChild(afterAbsorptionHeader);
+  table.appendChild(headerRow);
+
+  var rowsData = [
+    { label: "Basic Pay:", existingValue: bp.toFixed(2), absorptionLabel: "New Basic Pay:", absorptionValue: nbp.toFixed(2) },
+    { label: "DA:", existingValue: daval.toFixed(2), absorptionLabel: "IDA:", absorptionValue: idaval.toFixed(2) },
+    { label: "HRA:", existingValue: hraval.toFixed(2), absorptionLabel: "I HRA:", absorptionValue: ihraval.toFixed(2) },
+    { label: "TPT:", existingValue: tpt.toFixed(2), absorptionLabel: "Cafeteria Allowance:", absorptionValue: cafetariaval.toFixed(2) },
+    { label: "CEA:", existingValue: ceaval.toFixed(2), absorptionLabel: "Special Comp. Allowance:", absorptionValue: sca.toFixed(2) },
+    { label: "Newspaper Allowance:", existingValue: newsval.toFixed(2), absorptionLabel: "Total Proposed:", absorptionValue: (nbp + idaval + ihraval + cafetariaval + sca).toFixed(2) },
+  ];
+
+  for (var i = 0; i < rowsData.length; i++) {
+    var row = document.createElement("tr");
+
+    var existingLabelCell = document.createElement("td");
+    existingLabelCell.textContent = rowsData[i].label;
+    row.appendChild(existingLabelCell);
+
+    var existingValueCell = document.createElement("td");
+    existingValueCell.textContent = rowsData[i].existingValue;
+    row.appendChild(existingValueCell);
+
+    var absorptionLabelCell = document.createElement("td");
+    absorptionLabelCell.textContent = rowsData[i].absorptionLabel;
+    row.appendChild(absorptionLabelCell);
+
+    var absorptionValueCell = document.createElement("td");
+    absorptionValueCell.textContent = rowsData[i].absorptionValue;
+    row.appendChild(absorptionValueCell);
+
+    table.appendChild(row);
+  }
+
+  // Append the table to the document body
+  document.body.appendChild(table);
+}
+</script>

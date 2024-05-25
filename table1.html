@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(218, 218, 254);
+        }
+
+        h1 {
+            text-align: center;
+            margin: 10px;
+            padding: 10px;
+        }
+        #compare-btn{
+            margin: 5px;
+            position: relative;
+            left:45%;
+            width: 160px;    
+            text-align: center;
+            background-color: #9f97b192; 
+            transition-property: all;
+         }
+         #compare-btn:hover{
+            background-color: #7c758b92;
+            font-size: 15px;
+            color: #27223292;
+         }
+
+        .container {
+            max-width: 400px;
+            margin: 2px auto;
+            border: 2px solid #6b5f8592;
+            border-radius: 1px;
+            text-align: left;
+            padding: 10px;
+            
+        }
+        
+
+        .result-table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .result-table th,
+        .result-table td {
+            border: 1px solid #7c758b92;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .result-table th {
+            background-color: #9f97b192;
+            text-align: center;
+        }
+
+        .result-table td:nth-child(even) {
+            background-color: #9f97b192;
+        }
+        .input_table td{
+            border: 1px solid #7c758b92;
+            padding: 8px;
+            text-align: left;}
+
+        
+    </style>
+</head>
+<body>
+    <h1>Salary Comparison</h1>
+    <div class="vertical-center">
+        <button id="compare-btn">Compare</button>
+    </div> 
+    
+    <div class="container">
+        <table class="input_table"> 
+            <tr>
+                <td><label for="basic-pay">Basic Pay:</label> </td> 
+                <td><input type="text" id="basic-pay" placeholder="enter basic pay"></td>
+            </tr>
+        <tr>
+            <td>
+                <label for="pay-level">Pay Level:</label>
+            </td>   
+            <td>
+                <select id="pay-level">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                </select>
+            </td>
+            </tr>
+        <tr><td>
+            <label for="da-percentage">DA Percentage:</label> 
+        </td>
+        <td>
+            <select id="da-percentage">
+                <option value="42">42</option>
+            </select>
+        </td>
+    </tr>
+        <tr>
+            <td><label for="num-children">Number of Children for CEA:</label></td>
+            <td>
+                <select id="num-children">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+            </td>
+        </tr>
+    </table>        
+          
+</div>
+    <table id="result-table" class="result-table">
+      <tr>
+          <th colspan="2">Existing Pay</th>
+          <th colspan="2">After Absorption</th>
+      </tr>
+      <tr>
+          <td>Basic Pay:</td>
+          <td id="existing-basic-pay"></td>
+          <td>New Basic Pay:</td>
+          <td id="new-basic-pay"></td>
+      </tr>
+      <tr>
+          <td>DA:</td>
+          <td id="da"></td>
+          <td>IDA:</td>
+          <td id="ida"></td>
+      </tr>
+      <tr>
+          <td>HRA:</td>
+          <td id="hra"></td>
+          <td>I HRA:</td>
+          <td id="i-hra"></td>
+      </tr>
+      <tr>
+          <td>TPT:</td>
+          <td id="tpt"></td>
+          <td>Cafeteria Allowance:</td>
+          <td id="cafeteria-allowance"></td>
+      </tr>
+      <tr>
+          <td>CEA:</td>
+          <td id="cea"></td>
+          <td>Special Comp. Allowance:</td>
+          <td id="special-comp-allowance"></td>
+      </tr>
+      <tr>
+          <td>Newspaper Allowance:</td>
+          <td id="newspaper-allowance"></td>
+          <td>Total Proposed:</td>
+          <td id="total-proposed"></td>
+      </tr>
+  </table>
+  <script>
+    var compareButton = document.getElementById('compare-btn');
+    compareButton.addEventListener('click', compare);
+
+    function compare() {
+        clearResults();
+
+        var tpt = 0;
+        var ida = 38.3;
+        var cafetaria = 26;
+        var hra = 18;
+
+        var bp = parseFloat(document.getElementById('basic-pay').value);
+        var level = parseInt(document.getElementById('pay-level').value);
+        var da = parseFloat(document.getElementById('da-percentage').value);
+        var cea = parseInt(document.getElementById('num-children').value);
+
+        var nbp = parseFloat((bp * ((1 + (da / 100)) / (1 + (ida / 100)))).toFixed(2));
+
+        if (nbp < 20000 && level === 1) {
+            nbp = 20000;
+        }
+
+        if (nbp < 21000 && level === 2) {
+            nbp = 21000;
+        }
+
+        if (nbp < 23000 && level === 3) {
+            nbp = 23000;
+        }
+
+        var daval = parseFloat((bp * (da / 100)).toFixed(2));
+        var idaval = parseFloat((nbp * (ida / 100)).toFixed(2));
+        var hraval = parseFloat((bp * (hra / 100)).toFixed(2));
+        var ihraval = parseFloat((nbp * (hra / 100)).toFixed(2));
+        var ceaval = cea * 2250;
+
+        if (level >= 7) {
+            var newsval = 500;
+        } else {
+            var newsval = 0;
+        }
+
+        if (level >= 13) {
+            var televal = 2000;
+        } else {
+            var televal = 0;
+        }
+
+        if (level >= 1 && level <= 2) {
+            if (bp >= 24200) {
+                tpt = parseFloat((1800 * (1 + (da / 100))).toFixed(2));
+            } else {
+                tpt = parseFloat((900 * (1 + (da / 100))).toFixed(2));
+            }
+        } else if (level >= 3 && level <= 8) {
+            tpt = parseFloat((1800 * (1 + (da / 100))).toFixed(2));
+        } else if (level >= 9) {
+            tpt = parseFloat((3600 * (1 + (da / 100))).toFixed(2));
+        }
+
+        var cafetariaval = parseFloat((nbp * (cafetaria / 100)).toFixed(2));
+
+        var allow = tpt + ceaval + newsval + televal;
+
+        var sca;
+        if (allow > cafetariaval) {
+            sca = allow - cafetariaval;
+        } else {
+            sca = 0;
+        }
+
+        document.getElementById('existing-basic-pay').textContent = bp.toFixed(2);
+        document.getElementById('new-basic-pay').textContent = nbp.toFixed(2);
+        document.getElementById('da').textContent = daval.toFixed(2);
+        document.getElementById('ida').textContent = idaval.toFixed(2);
+        document.getElementById('hra').textContent = hraval.toFixed(2);
+        document.getElementById('i-hra').textContent = ihraval.toFixed(2);
+        document.getElementById('tpt').textContent = tpt.toFixed(2);
+        document.getElementById('cafeteria-allowance').textContent = cafetariaval.toFixed(2);
+        document.getElementById('cea').textContent = ceaval.toFixed(2);
+        document.getElementById('special-comp-allowance').textContent = sca.toFixed(2);
+        document.getElementById('newspaper-allowance').textContent = newsval.toFixed(2);
+        document.getElementById('total-proposed').textContent = (nbp + idaval + ihraval + cafetariaval + sca).toFixed(2);
+    }
+
+    function clearResults() {
+        var resultTable = document.getElementById('result-table');
+        var rows = resultTable.rows;
+        for (var i = 1; i < rows.length; i++) {
+            rows[i].cells[1].textContent = '';
+            rows[i].cells[3].textContent = '';
+        }
+    }
+</script>
+</body>
+</html>
